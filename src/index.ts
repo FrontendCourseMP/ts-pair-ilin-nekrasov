@@ -16,4 +16,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
         output.textContent = result;
     });
+    // TODO хорс заголовки, хэш мапы
 });
