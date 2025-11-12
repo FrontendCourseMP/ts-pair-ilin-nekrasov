@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('Name') as HTMLInputElement;
     const midNameInput = document.getElementById('MidName') as HTMLInputElement;
 
+    if (!form || !output || !surnameInput || !nameInput || !midNameInput) {
+        console.error('One or more required elements not found');
+        return;
+    }
+
     form.addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -12,9 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = nameInput.value.trim();
         const midName = midNameInput.value.trim();
 
-        const result = `${surname} ${name[0] ? name[0] + '.' : ''} ${midName[0] ? midName[0] + '.' : ''}`.trim();
+        const nameInitial = name[0] ? `${name[0]}.` : '';
+        const midNameInitial = midName[0] ? `${midName[0]}.` : '';
+        
+        const result = `${surname} ${nameInitial} ${midNameInitial}`.trim().replace(/\s+/g, ' ');
 
         output.textContent = result;
     });
-    // TODO хорс заголовки, хэш мапы
 });
