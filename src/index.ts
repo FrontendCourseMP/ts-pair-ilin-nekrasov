@@ -29,9 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const nameInitial = name.length > 0 ? `${name[0]}.` : '';
-        const midNameInitial = midName.length > 0 ? `${midName[0]}.` : '';
-        const result = `${surname} ${nameInitial} ${midNameInitial}`.trim().replace(/\s+/g, ' ');
+        const result = `${surname} ${name} ${midName}`.trim().replace(/\s+/g, ' ');
 
         output1.textContent = result;
     });
