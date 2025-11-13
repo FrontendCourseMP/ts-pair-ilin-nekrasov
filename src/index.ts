@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = nameInput.value?.trim() || '';
         const midName = midNameInput.value?.trim() || '';
 
-        if (!isValidNamePart(surname) || !isValidNamePart(name) || (midName && !isValidNamePart(midName))) {
+        if (!isValidNamePart(surname) || !isValidNamePart(name) || !isValidNamePart(midName)) {
             output1.textContent = 'Ошибка: введите корректные ФИО (только буквы, первая заглавная)';
             return;
         }
