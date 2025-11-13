@@ -60,4 +60,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         output2.textContent = result;
     });
+    class MathExpressionEvaluator {
+        expression: string;
+
+        constructor() {
+            this.expression = "";
+        }
+
+        setExpression(expr: string) {
+            this.expression = expr.replace(/[^0-9.+*]/g, '');
+        }
+
+        evaluate(): number | string {
+            try {
+            if (!/^[0-9.+*]+$/.test(this.expression)) {
+                return "Недопустимые символы в выражении";
+            }
+            const func = new Function('return ' + this.expression);
+            const result = func();
+            if (typeof result === "number" && !isNaN(result)) {
+                return result;
+            } else {
+                return "Ошибка вычисления";
+            }
+            } catch {
+            return "Ошибка вычисления";
+            }
+        }
+        }
+
+        const form = document.getElementById('calcForm') as HTMLFormElement;
+        const input = document.getElementById('expressionInput') as HTMLInputElement;
+        const resultDiv = document.getElementById('result') as HTMLDivElement;
+
+        const evaluator = new MathExpressionEvaluator();
+
+        form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        evaluator.setExpression(input.value);
+        const result = evaluator.evaluate();
+        resultDiv.textContent = 'Результат: ' + result;
+    });
 });
