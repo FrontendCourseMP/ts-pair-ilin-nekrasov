@@ -101,4 +101,5 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = evaluator.evaluate();
         resultDiv.textContent = 'Результат: ' + result;
     });
+    // TODO проверить дома и доделать, если что-то не так (вроде всё так)
 });
