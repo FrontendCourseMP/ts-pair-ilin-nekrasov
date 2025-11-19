@@ -62,40 +62,89 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     class MathExpressionEvaluator {
         expression: string;
+        result: string | number;
 
         constructor() {
             this.expression = "";
+            this.result = "";
         }
 
         setExpression(expr: string) {
-            this.expression = expr.replace(/[^0-9.+*]/g, '');
+            this.result = "";
+            const cleaned = expr.replace(/\s+/g, '');
+
+            if (!/^[0-9+*.]+$/.test(cleaned)) {
+                this.result = "Ошибка: выражение содержит недопустимые символы (только цифры, +, * и точка разрешены)";
+                this.expression = "";
+                return;
+            }
+            if (/(\+|\*){2,}/.test(cleaned)) {
+                this.result = "Ошибка: подряд идущие операторы (+ или *) без числа между ними";
+                this.expression = "";
+                return;
+            }
+            if (/^[+*]/.test(cleaned)) {
+                this.result = "Ошибка: выражение не может начинаться с оператора";
+                this.expression = "";
+                return;
+            }
+            if (/[+*]$/.test(cleaned)) {
+                this.result = "Ошибка: выражение не может заканчиваться оператором";
+                this.expression = "";
+                return;
+            }
+            if (/\.\./.test(cleaned)) {
+                this.result = "Ошибка: в выражении обнаружены две точки подряд";
+                this.expression = "";
+                return;
+            }
+
+            const parts = cleaned.split(/[\+\*]/);
+            for (const part of parts) {
+                if (part.split('.').length > 2) {
+                    this.result = `Ошибка: число "${part}" содержит более одной точки`;
+                    this.expression = "";
+                    return;
+                }
+                if (part === '') {
+                    this.result = "Ошибка: выражение содержит пустой операнд";
+                    this.expression = "";
+                    return;
+                }
+            }
+
+            this.expression = cleaned;
+            this.result = "";
         }
 
         evaluate(): number | string {
-            try {
-            if (!/^[0-9.+*]+$/.test(this.expression)) {
-                return "Недопустимые символы в выражении";
+            if (this.result && typeof this.result === "string") {
+                return this.result;
             }
-            const func = new Function('return ' + this.expression);
-            const result = func();
-            if (typeof result === "number" && !isNaN(result)) {
-                return result;
-            } else {
+            if (!this.expression) {
+                return "Ошибка: выражение пустое или некорректное";
+            }
+            try {
+                const func = new Function('return ' + this.expression);
+                const value = func();
+                if (typeof value === "number" && isFinite(value)) {
+                    this.result = value;
+                    return value;
+                }
+                return "Ошибка вычисления";
+            } catch {
                 return "Ошибка вычисления";
             }
-            } catch {
-            return "Ошибка вычисления";
-            }
         }
-        }
+    }
 
-        const form = document.getElementById('calcForm') as HTMLFormElement;
-        const input = document.getElementById('expressionInput') as HTMLInputElement;
-        const resultDiv = document.getElementById('result') as HTMLDivElement;
+    const form = document.getElementById('calcForm') as HTMLFormElement;
+    const input = document.getElementById('expressionInput') as HTMLInputElement;
+    const resultDiv = document.getElementById('result') as HTMLDivElement;
 
-        const evaluator = new MathExpressionEvaluator();
+    const evaluator = new MathExpressionEvaluator();
 
-        form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', (event) => {
         event.preventDefault();
         evaluator.setExpression(input.value);
         const result = evaluator.evaluate();
